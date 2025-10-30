@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/NavBar/page";
+// import { NotificationProvider } from "@/components/NotificationContext";
+// import NotificationContainer from "@/components/NotificationContainer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,6 +42,8 @@ export default function RootLayout({
       >
         <Navbar />
         <main className="pt-20">
+           {/* <NotificationProvider children={undefined} />
+          <NotificationContainer /> */}
           {children}
         </main>
       </body>
