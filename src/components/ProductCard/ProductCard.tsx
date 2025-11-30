@@ -93,7 +93,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <p className="text-sm text-gray-500 mb-2">Starting from</p>
           <p className="text-xl font-bold text-gray-900">
             {product.priceMin && product.priceMax ? 
-              `$${product.priceMin} - ${product.priceMax}` : 
+              `$${product.priceMin} - $${product.priceMax}` : 
               "Price not available"
             }
           </p>

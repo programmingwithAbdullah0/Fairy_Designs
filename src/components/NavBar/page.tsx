@@ -295,7 +295,7 @@ export default function Navbar() {
             Home
           </Link>
           <div className="relative group">
-            <button className="hover:text-pink-600 transition flex items-center gap-1">
+            <Link href="/products_sanity" className="hover:text-pink-600 transition flex items-center gap-1">
               Products
               <svg
                 className="w-4 h-4 transition group-hover:rotate-180"
@@ -305,16 +305,16 @@ export default function Navbar() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
-            </button>
+            </Link>
             <div className="absolute left-0 mt-0 w-40 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <Link
-                href="/?category=logo"
+                href="/products_sanity?category=logo"
                 className="block px-4 py-3 hover:bg-pink-50 hover:text-pink-600 transition rounded-t-lg"
               >
                 Logo Designs
               </Link>
               <Link
-                href="/?category=banner"
+                href="/products_sanity?category=banner"
                 className="block px-4 py-3 hover:bg-pink-50 hover:text-pink-600 transition rounded-b-lg"
               >
                 Banner Designs
@@ -392,7 +392,7 @@ export default function Navbar() {
           {isProductsOpen && (
             <div className="pl-4 space-y-2">
               <Link
-                href="/?category=logo"
+                href="/products_sanity?category=logo"
                 onClick={() => {
                   setIsOpen(false);
                   setIsProductsOpen(false);
@@ -402,7 +402,7 @@ export default function Navbar() {
                 Logo Designs
               </Link>
               <Link
-                href="/?category=banner"
+                href="/products_sanity?category=banner"
                 onClick={() => {
                   setIsOpen(false);
                   setIsProductsOpen(false);

@@ -10,6 +10,5 @@
 
 import { client } from './client'
 
-// ✅ Temporary fix - live feature disable
 export const sanityFetch = client.fetch
 export const SanityLive = () => null
