@@ -224,7 +224,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Upload, X } from 'lucide-react'
 import Link from 'next/link'
-import Imge from 'next/image'
+// import Image from 'next/image'
 
 interface Category {
   _id: string
