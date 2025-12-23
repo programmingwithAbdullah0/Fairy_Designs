@@ -3,6 +3,7 @@
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { showSuccess, showError } from '@/lib/toast';
 
 export default function DeleteCategoryButton({ id }: { id: string }) {
   const [loading, setLoading] = useState(false);
@@ -20,13 +21,14 @@ export default function DeleteCategoryButton({ id }: { id: string }) {
       });
 
       if (response.ok) {
+        showSuccess('Category deleted successfully!');
         router.refresh();
       } else {
-        alert('Failed to delete category');
+        showError('Failed to delete category');
       }
     } catch (error) {
       console.error('Error deleting category:', error);
-      alert('Error deleting category');
+      showError('Error deleting category');
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/NavBar/page";
-// import { NotificationProvider } from "@/components/NotificationContext";
-// import NotificationContainer from "@/components/NotificationContainer";
+import { Navbar } from "@/components/NavBar/page";
+import { ToastProvider } from "@/components/ToastProvider";
+import { ClerkProvider } from '@clerk/nextjs';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,27 +27,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // <html lang="en">
-    //   <body
-    //     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-    //   >
-    //     <Navbar/>
-    //     {children}
-    //   </body>
-    // </html>
-
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navbar />
-        <main className="pt-20">
-           {/* <NotificationProvider children={undefined} />
-          <NotificationContainer /> */}
-          {children}
-        </main>
-      </body>
-    </html>
-
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Navbar />
+          <ToastProvider />
+          <main className="pt-20">
+            {children}
+          </main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

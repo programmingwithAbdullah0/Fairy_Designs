@@ -56,11 +56,16 @@
 
 import Link from 'next/link'
 import { Plus, Edit } from 'lucide-react'
-import { client } from '@/sanity/lib/client'
+import { writeClient } from '@/sanity/lib/client'
 import DeleteCategoryButton from './DeleteCategoryButton'
 
+// Force dynamic rendering to avoid CDN cache issues in admin panel
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 async function getCategories() {
-  return await client.fetch(`*[_type == "category"]{
+  // Use writeClient (useCdn: false) to get fresh data without CDN caching
+  return await writeClient.fetch(`*[_type == "category"]{
     _id, name, description,
     "slug": slug.current
   } | order(name asc)`)

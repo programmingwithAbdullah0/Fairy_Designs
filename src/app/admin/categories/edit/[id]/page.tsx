@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { showSuccess, showError } from '@/lib/toast';
 
 interface CategoryFormData {
   name: string;
@@ -40,7 +41,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
       }
     } catch (error) {
       console.error('Error fetching category:', error);
-      alert('Failed to load category');
+      showError('Failed to load category');
       setNotFound(true);
     } finally {
       setLoadingCategory(false);
@@ -56,31 +57,36 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.slug) {
-      alert('Name and Slug are required!');
+      showError('Name and Slug are required!');
       return;
     }
 
     setLoading(true);
 
     try {
+      // Use FormData to match API route expectations
+      const fd = new FormData();
+      fd.append('name', formData.name);
+      fd.append('slug', formData.slug);
+      fd.append('description', formData.description);
+
       const response = await fetch(`/api/categories?id=${params.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: fd,
       });
 
       const result = await response.json();
 
       if (result.success) {
-        alert('Category updated successfully!');
+        showSuccess('Category updated successfully!');
         router.push('/admin/categories');
         router.refresh();
       } else {
-        alert('Error: ' + (result.error || 'Failed to update'));
+        showError('Error: ' + (result.error || 'Failed to update'));
       }
     } catch (error) {
       console.error('Update failed:', error);
-      alert('Failed to update category');
+      showError('Failed to update category');
     } finally {
       setLoading(false);
     }

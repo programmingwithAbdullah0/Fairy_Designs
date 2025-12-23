@@ -317,6 +317,7 @@ import Link from "next/link";
 import { Plus, Search, Edit, Trash2, Filter } from "lucide-react";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface Product {
   _id: string;
@@ -390,7 +391,7 @@ export default function ProductsPage() {
       }
     } catch (error) {
       console.error("Error fetching products:", error);
-      alert("Failed to load products");
+      showError("Failed to load products");
     }
   };
 
@@ -415,13 +416,13 @@ export default function ProductsPage() {
 
       if (result.success) {
         setProducts(prev => prev.filter(p => p._id !== id));
-        alert("Product deleted successfully!");
+        showSuccess("Product deleted successfully!");
       } else {
-        alert("Error: " + (result.error || "Unknown error"));
+        showError("Error: " + (result.error || "Unknown error"));
       }
     } catch (error) {
       console.error("Delete failed:", error);
-      alert("Failed to delete product");
+      showError("Failed to delete product");
     } finally {
       setDeleteLoading(null);
     }

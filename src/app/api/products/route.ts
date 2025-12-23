@@ -9,9 +9,36 @@ import { client, writeClient } from "@/sanity/lib/client"
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-// 1. GET → List all products
-export async function GET() {
+// 1. GET → List all products OR fetch single product by ID
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get("id")
+
+    // If ID provided, fetch single product
+    if (id) {
+      const product = await client.fetch(
+        `*[_type == "product" && _id == $id][0] {
+          _id,
+          name,
+          slug,
+          priceMin,
+          priceMax,
+          description,
+          image,
+          "category": category-> { _id, name, "slug": slug.current }
+        }`,
+        { id }
+      )
+
+      if (!product) {
+        return NextResponse.json({ error: "Product not found" }, { status: 404 })
+      }
+
+      return NextResponse.json({ success: true, product })
+    }
+
+    // Otherwise, list all products
     const products = await client.fetch(`
       *[_type == "product"] | order(_createdAt desc) {
         _id,
@@ -20,7 +47,7 @@ export async function GET() {
         priceMin,
         priceMax,
         description,
-        "imageUrl": image.asset->url,
+        image,
         "category": category-> { _id, name, "slug": slug.current }
       }
     `)
@@ -33,7 +60,7 @@ export async function GET() {
 
 // 2. POST → Add new product (with image upload)
 export async function POST(req: Request) {
-  if (!process.env.NEXT_PUBLIC_SANITY_API_TOKEN) {
+  if (!process.env.SANITY_API_TOKEN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -80,7 +107,7 @@ export async function POST(req: Request) {
 
 // 3. PUT → Edit product
 export async function PUT(req: Request) {
-  if (!process.env.NEXT_PUBLIC_SANITY_API_TOKEN) {
+  if (!process.env.SANITY_API_TOKEN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -148,7 +175,7 @@ export async function PUT(req: Request) {
 
 // 4. DELETE → Delete product
 export async function DELETE(req: Request) {
-  if (!process.env.NEXT_PUBLIC_SANITY_API_TOKEN) {
+  if (!process.env.SANITY_API_TOKEN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 

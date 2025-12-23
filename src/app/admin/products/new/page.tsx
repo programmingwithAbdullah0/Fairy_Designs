@@ -224,6 +224,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Upload, X } from 'lucide-react'
 import Link from 'next/link'
+import { showSuccess, showError } from '@/lib/toast'
 // import Image from 'next/image'
 
 interface Category {
@@ -254,7 +255,13 @@ export default function NewProductPage() {
     try {
       const response = await fetch('/api/categories')
       const data = await response.json()
-      if (data.success) {
+
+      // Handle both response formats: array or {success, categories}
+      if (Array.isArray(data)) {
+        setCategories(data)
+      } else if (data.success && data.categories) {
+        setCategories(data.categories)
+      } else if (data.categories) {
         setCategories(data.categories)
       }
     } catch (error) {
@@ -267,13 +274,13 @@ export default function NewProductPage() {
     if (file) {
       // Check file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file')
+        showError('Please select an image file')
         return
       }
-      
+
       // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB')
+        showError('Image size should be less than 5MB')
         return
       }
 
@@ -295,15 +302,15 @@ export default function NewProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validation
     if (!formData.name || !formData.slug || !formData.priceMin || !formData.priceMax) {
-      alert('Please fill all required fields')
+      showError('Please fill all required fields')
       return
     }
 
     if (!image) {
-      alert('Please select a product image')
+      showError('Please select a product image')
       return
     }
 
@@ -317,7 +324,7 @@ export default function NewProductPage() {
       formDataToSend.append('priceMax', formData.priceMax)
       formDataToSend.append('description', formData.description)
       formDataToSend.append('category', formData.category)
-      
+
       if (image) {
         formDataToSend.append('image', image)
       }
@@ -330,15 +337,15 @@ export default function NewProductPage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('Product created successfully!')
+        showSuccess('Product created successfully!')
         router.push('/admin/products')
         router.refresh()
       } else {
-        alert('Error creating product: ' + result.error)
+        showError('Error creating product: ' + result.error)
       }
     } catch (error) {
       console.error('Error creating product:', error)
-      alert('Error creating product')
+      showError('Error creating product')
     } finally {
       setLoading(false)
     }
@@ -473,7 +480,12 @@ export default function NewProductPage() {
           {imagePreview ? (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
               <div className="relative inline-block">
-                
+                {/* Display the image preview */}
+                <img
+                  src={imagePreview}
+                  alt="Product preview"
+                  className="w-64 h-64 object-cover rounded-lg mx-auto"
+                />
                 <button
                   type="button"
                   onClick={removeImage}

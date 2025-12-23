@@ -139,6 +139,7 @@
 
 import { NextResponse } from "next/server";
 import { client, writeClient } from "@/sanity/lib/client";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -182,7 +183,7 @@ export async function GET(req: Request) {
       }
     `);
 
-    return NextResponse.json(categories);
+    return NextResponse.json({ success: true, categories });
   } catch (error) {
     console.error("GET categories error:", error);
     return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
@@ -224,6 +225,10 @@ export async function POST(req: Request) {
       description,
       image: imageAsset,
     });
+
+    // Clear cache so navbar updates immediately
+    revalidatePath('/', 'layout');
+    revalidatePath('/products_sanity');
 
     return NextResponse.json({ success: true, category });
   } catch (error: any) {
@@ -272,6 +277,11 @@ export async function PUT(req: Request) {
     }
 
     const updated = await writeClient.patch(id).set(updateFields).commit();
+
+    // Clear cache so navbar updates immediately
+    revalidatePath('/', 'layout');
+    revalidatePath('/products_sanity');
+
     return NextResponse.json({ success: true, category: updated });
   } catch (error: any) {
     console.error("PUT category error:", error);
@@ -296,6 +306,11 @@ export async function DELETE(req: Request) {
 
   try {
     await writeClient.delete(id);
+
+    // Clear cache so navbar updates immediately
+    revalidatePath('/', 'layout');
+    revalidatePath('/products_sanity');
+
     return NextResponse.json({ success: true, message: "Category deleted" });
   } catch (error: any) {
     console.error("DELETE category error:", error);

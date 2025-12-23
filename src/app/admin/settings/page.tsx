@@ -40,26 +40,50 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { showSuccess, showError } from '@/lib/toast'
+
+const DEFAULT_SETTINGS = {
+  siteName: 'My Store',
+  siteDescription: 'Best products in town',
+  email: 'fairydesigns0@gmail.com',
+  phone: '+1234567890'
+}
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(false)
-  const [settings, setSettings] = useState({
-    siteName: 'My Store',
-    siteDescription: 'Best products in town',
-    email: 'fairydesigns0@gmail.com',
-    phone: '+1234567890'
-  })
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
+
+  // Load settings from localStorage on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('adminSettings')
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings))
+      } catch (error) {
+        console.error('Error loading settings:', error)
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      // Save to localStorage
+      localStorage.setItem('adminSettings', JSON.stringify(settings))
+
+      // Simulate slight delay for better UX
+      setTimeout(() => {
+        setLoading(false)
+        showSuccess('Settings saved successfully!')
+      }, 500)
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      showError('Failed to save settings')
       setLoading(false)
-      alert('Settings saved successfully!')
-    }, 1000)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

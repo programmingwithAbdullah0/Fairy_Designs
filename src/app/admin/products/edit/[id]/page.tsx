@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
+import { urlFor } from "@/sanity/lib/image";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface Category {
   _id: string;
@@ -18,6 +20,9 @@ export default function EditProductPage() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [currentImage, setCurrentImage] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,7 +42,7 @@ export default function EditProductPage() {
 
   const fetchProduct = async () => {
     try {
-      const res = await fetch(`/api/products/${id}`);
+      const res = await fetch(`/api/products?id=${id}`);
       const data = await res.json();
       if (data.success && data.product) {
         const p = data.product;
@@ -49,13 +54,17 @@ export default function EditProductPage() {
           description: p.description || "",
           category: p.category?._id || "",
         });
+        // Store current image for preview
+        if (p.image) {
+          setCurrentImage(p.image);
+        }
       } else {
-        alert("Product not found");
+        showError("Product not found");
         router.push("/admin/products");
       }
     } catch (error) {
       console.error("Error fetching product:", error);
-      alert("Error fetching product");
+      showError("Error fetching product");
     } finally {
       setInitialLoading(false);
     }
@@ -65,7 +74,14 @@ export default function EditProductPage() {
     try {
       const res = await fetch("/api/categories");
       const data = await res.json();
-      if (data.success) setCategories(data.categories);
+      // Handle both response formats: array or {success, categories}
+      if (Array.isArray(data)) {
+        setCategories(data);
+      } else if (data.success && data.categories) {
+        setCategories(data.categories);
+      } else if (data.categories) {
+        setCategories(data.categories);
+      }
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -79,6 +95,32 @@ export default function EditProductPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        showError("Please select an image file");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showError("Image size should be less than 5MB");
+        return;
+      }
+
+      setImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    setImagePreview("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,7 +130,7 @@ export default function EditProductPage() {
       !formData.priceMin ||
       !formData.priceMax
     ) {
-      alert("Please fill required fields");
+      showError("Please fill required fields");
       return;
     }
 
@@ -116,13 +158,18 @@ export default function EditProductPage() {
       formDataToSend.append('priceMin', payload.priceMin.toString());
       formDataToSend.append('priceMax', payload.priceMax.toString());
       formDataToSend.append('description', payload.description);
-      
+
       if (payload.category) {
         // payload.category could be an ID string or an object with _ref, handle both
         const categoryId = typeof payload.category === 'object' ? payload.category._ref : payload.category;
         formDataToSend.append('category', categoryId);
       } else {
         formDataToSend.append('category', ''); // Send empty string to clear category
+      }
+
+      // Add image if user selected a new one
+      if (image) {
+        formDataToSend.append('image', image);
       }
       
       const res = await fetch(`/api/products?id=${id}`, {
@@ -132,14 +179,14 @@ export default function EditProductPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert("Product updated successfully");
+        showSuccess("Product updated successfully");
         router.push("/admin/products");
       } else {
-        alert("Error updating product: " + (data.error || "Unknown"));
+        showError("Error updating product: " + (data.error || "Unknown"));
       }
     } catch (error) {
       console.error("Error updating product:", error);
-      alert("Error updating product");
+      showError("Error updating product");
     } finally {
       setLoading(false);
     }
@@ -257,6 +304,74 @@ export default function EditProductPage() {
             onChange={handleChange}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Product Image
+          </label>
+
+          {imagePreview ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <div className="relative inline-block">
+                <img
+                  src={imagePreview}
+                  alt="New product preview"
+                  className="w-64 h-64 object-cover rounded-lg mx-auto"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">New image selected</p>
+              <button
+                type="button"
+                onClick={() => document.getElementById("image-upload")?.click()}
+                className="mt-2 text-blue-600 hover:text-blue-700 text-sm"
+              >
+                Change Image
+              </button>
+            </div>
+          ) : currentImage ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <div className="relative inline-block">
+                <img
+                  src={urlFor(currentImage).width(256).height(256).url()}
+                  alt="Current product"
+                  className="w-64 h-64 object-cover rounded-lg mx-auto"
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-2">Current image</p>
+              <button
+                type="button"
+                onClick={() => document.getElementById("image-upload")?.click()}
+                className="mt-2 text-blue-600 hover:text-blue-700 text-sm"
+              >
+                Change Image
+              </button>
+            </div>
+          ) : (
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+              onClick={() => document.getElementById("image-upload")?.click()}
+            >
+              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600 mb-1">Click to upload product image</p>
+              <p className="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB</p>
+            </div>
+          )}
+
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
           />
         </div>
 
