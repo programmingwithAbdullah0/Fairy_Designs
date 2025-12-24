@@ -224,8 +224,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Upload, X } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { showSuccess, showError } from '@/lib/toast'
-// import Image from 'next/image'
 
 interface Category {
   _id: string
@@ -481,9 +481,11 @@ export default function NewProductPage() {
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
               <div className="relative inline-block">
                 {/* Display the image preview */}
-                <img
+                <Image
                   src={imagePreview}
                   alt="Product preview"
+                  width={256}
+                  height={256}
                   className="w-64 h-64 object-cover rounded-lg mx-auto"
                 />
                 <button

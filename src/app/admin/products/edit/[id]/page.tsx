@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { showSuccess, showError } from "@/lib/toast";
@@ -315,9 +316,11 @@ export default function EditProductPage() {
           {imagePreview ? (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
               <div className="relative inline-block">
-                <img
+                <Image
                   src={imagePreview}
                   alt="New product preview"
+                  width={256}
+                  height={256}
                   className="w-64 h-64 object-cover rounded-lg mx-auto"
                 />
                 <button
@@ -340,9 +343,11 @@ export default function EditProductPage() {
           ) : currentImage ? (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
               <div className="relative inline-block">
-                <img
+                <Image
                   src={urlFor(currentImage).width(256).height(256).url()}
                   alt="Current product"
+                  width={256}
+                  height={256}
                   className="w-64 h-64 object-cover rounded-lg mx-auto"
                 />
               </div>
