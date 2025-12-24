@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, ChevronDown, Menu, X } from 'lucide-react';
 import { Category } from '@/types';
+import { AutoLogoutLink } from '@/components/AutoLogoutLink';
 
 // Category emoji mapping
 const categoryEmojis: Record<string, string> = {
@@ -98,24 +99,24 @@ export function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Left - Brand Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center group">
+            <AutoLogoutLink href="/" className="flex items-center group">
               <span className="text-3xl font-extrabold text-gray-900 tracking-tight group-hover:text-pink-600 transition-colors duration-300">
                 Fairy
               </span>
               <span className="text-3xl font-extrabold text-pink-600 ml-1.5 group-hover:text-pink-700 transition-colors duration-300">
                 Designs
               </span>
-            </Link>
+            </AutoLogoutLink>
           </div>
 
           {/* Center - Navigation Links */}
-          <div className="hidden lg:flex items-center space-x-1">
-            <Link
+          <div className="hidden lg:flex items-center space-x-0.5">
+            <AutoLogoutLink
               href="/"
-              className="px-4 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
+              className="px-3 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               Home
-            </Link>
+            </AutoLogoutLink>
 
             {/* Products Dropdown */}
             <div className="relative">
@@ -123,7 +124,7 @@ export function Navbar() {
                 onClick={() => setIsProductsOpen(!isProductsOpen)}
                 onMouseEnter={() => setIsProductsOpen(true)}
                 onMouseLeave={() => setIsProductsOpen(false)}
-                className="flex items-center gap-1.5 px-4 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
+                className="flex items-center gap-1 px-3 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
               >
                 Products
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isProductsOpen ? 'rotate-180' : ''}`} />
@@ -164,26 +165,26 @@ export function Navbar() {
               )}
             </div>
 
-            <Link
+            <AutoLogoutLink
               href="/services"
-              className="px-4 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
+              className="px-3 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               Services
-            </Link>
+            </AutoLogoutLink>
 
-            <Link
+            <AutoLogoutLink
               href="/about"
-              className="px-4 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
+              className="px-3 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               About
-            </Link>
+            </AutoLogoutLink>
 
-            <Link
+            <AutoLogoutLink
               href="/contact"
-              className="px-4 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
+              className="px-3 py-2 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               Contact
-            </Link>
+            </AutoLogoutLink>
           </div>
 
           {/* Right - Search Bar */}
@@ -228,40 +229,40 @@ export function Navbar() {
         aria-hidden="true"
       />
 
-      {/* Mobile Menu Full-Screen Drawer - 100vw x 100vh from Left */}
+      {/* Mobile Menu Sidebar Drawer - Auto Width */}
       <aside
         id="mobile-sidebar-menu"
         aria-label="Mobile navigation menu"
         aria-hidden={!isMobileMenuOpen}
-        className={`fixed top-0 left-0 w-screen h-screen bg-white z-[70] lg:hidden transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 left-0 w-[280px] h-screen bg-white z-[70] lg:hidden transform transition-transform duration-300 ease-out shadow-2xl ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="h-full overflow-y-auto flex flex-col">
           {/* Header with Logo and Close Button */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
-            <Link href="/" onClick={closeMobileMenu} className="flex items-center">
-              <span className="text-3xl font-extrabold text-gray-900">Fairy</span>
-              <span className="text-3xl font-extrabold text-pink-600 ml-1.5">Designs</span>
-            </Link>
+          <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+            <AutoLogoutLink href="/" onClick={closeMobileMenu} className="flex items-center">
+              <span className="text-2xl font-extrabold text-gray-900">Fairy</span>
+              <span className="text-2xl font-extrabold text-pink-600 ml-1">Designs</span>
+            </AutoLogoutLink>
             <button
               onClick={closeMobileMenu}
               aria-label="Close menu"
-              className="p-2.5 text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              className="p-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
             >
-              <X className="w-7 h-7" aria-hidden="true" />
+              <X className="w-6 h-6" aria-hidden="true" />
             </button>
           </div>
 
           {/* Menu Items */}
-          <div className="flex-1 px-6 py-8 space-y-3">
-            <Link
+          <div className="flex-1 px-4 py-4 space-y-1">
+            <AutoLogoutLink
               href="/"
               onClick={closeMobileMenu}
-              className="block px-5 py-4 text-lg font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all duration-200"
+              className="block px-4 py-3 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               Home
-            </Link>
+            </AutoLogoutLink>
 
             {/* Mobile Products Dropdown */}
             <div>
@@ -269,11 +270,11 @@ export function Navbar() {
                 onClick={() => setIsProductsOpen(!isProductsOpen)}
                 aria-expanded={isProductsOpen}
                 aria-controls="mobile-products-submenu"
-                className="w-full flex items-center justify-between px-5 py-4 text-lg font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full flex items-center justify-between px-4 py-3 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
               >
                 Products
                 <ChevronDown
-                  className={`w-5 h-5 transition-transform duration-200 ${isProductsOpen ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 transition-transform duration-200 ${isProductsOpen ? 'rotate-180' : ''}`}
                   aria-hidden="true"
                 />
               </button>
@@ -281,73 +282,73 @@ export function Navbar() {
               {isProductsOpen && (
                 <div
                   id="mobile-products-submenu"
-                  className="mt-2 ml-4 space-y-2 animate-in slide-in-from-top duration-200"
+                  className="mt-1 ml-3 space-y-1 animate-in slide-in-from-top duration-200"
                 >
                   <Link
                     href="/products_sanity"
                     onClick={closeMobileMenu}
-                    className="flex items-center px-5 py-3 text-base font-medium text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
+                    className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
                   >
-                    <span className="text-xl mr-3">🎨</span>
+                    <span className="text-base mr-2">🎨</span>
                     All Products
                   </Link>
 
                   {categoriesLoading ? (
-                    <div className="px-5 py-3 text-base text-gray-500">Loading...</div>
+                    <div className="px-4 py-2 text-sm text-gray-500">Loading...</div>
                   ) : categories.length > 0 ? (
                     categories.map((category) => (
                       <Link
                         key={category._id}
                         href={`/products_sanity?category=${category.slug}`}
                         onClick={closeMobileMenu}
-                        className="flex items-center px-5 py-3 text-base font-medium text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 capitalize"
+                        className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 capitalize"
                       >
-                        <span className="text-xl mr-3">{getCategoryEmoji(category.name)}</span>
+                        <span className="text-base mr-2">{getCategoryEmoji(category.name)}</span>
                         {category.name}
                       </Link>
                     ))
                   ) : (
-                    <div className="px-5 py-3 text-base text-gray-500">No categories yet</div>
+                    <div className="px-4 py-2 text-sm text-gray-500">No categories yet</div>
                   )}
                 </div>
               )}
             </div>
 
-            <Link
+            <AutoLogoutLink
               href="/services"
               onClick={closeMobileMenu}
-              className="block px-5 py-4 text-lg font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all duration-200"
+              className="block px-4 py-3 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               Services
-            </Link>
+            </AutoLogoutLink>
 
-            <Link
+            <AutoLogoutLink
               href="/about"
               onClick={closeMobileMenu}
-              className="block px-5 py-4 text-lg font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all duration-200"
+              className="block px-4 py-3 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               About
-            </Link>
+            </AutoLogoutLink>
 
-            <Link
+            <AutoLogoutLink
               href="/contact"
               onClick={closeMobileMenu}
-              className="block px-5 py-4 text-lg font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all duration-200"
+              className="block px-4 py-3 text-base font-semibold text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200"
             >
               Contact
-            </Link>
+            </AutoLogoutLink>
 
             {/* Mobile Search Bar */}
-            <div className="pt-6">
+            <div className="pt-4">
               <form onSubmit={handleSearch} className="relative">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search designs..."
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-base font-medium"
+                  placeholder="Search..."
+                  className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm font-medium"
                 />
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               </form>
             </div>
           </div>

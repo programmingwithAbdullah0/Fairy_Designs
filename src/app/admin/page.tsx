@@ -59,7 +59,7 @@ export default async function AdminDashboard() {
             Fairy Designs Admin Dashboard
           </h1>
           <p className="text-sm text-gray-600 mt-1">
-            Welcome back, {user?.firstName || user?.username || 'Admin'}
+            Welcome back, {user?.fullName || user?.firstName || user?.username || 'Admin'}
           </p>
         </div>
         <div className="flex items-center gap-3">

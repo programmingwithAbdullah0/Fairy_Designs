@@ -59,6 +59,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Package, Tags, Settings, Home, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { AdminAutoLogout } from '@/components/AdminAutoLogout'
 
 export default function AdminLayout({
   children,
@@ -77,9 +78,12 @@ export default function AdminLayout({
 
   return (
     <div className="flex h-screen bg-gray-100">
+      {/* Auto Logout Component */}
+      <AdminAutoLogout />
+
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
